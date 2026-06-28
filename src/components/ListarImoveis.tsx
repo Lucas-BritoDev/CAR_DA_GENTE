@@ -16,61 +16,19 @@ export default function ListarImoveis() {
       situacao: "Pendente",
     },
     {
-      nome: "Em preenchimento",
-      uf: "Em preenchimento",
-      municipio: "Em preenchimento",
-      condicao: "-",
-      situacao: "-",
+      nome: "Fazenda CAR da Gente",
+      uf: "BA",
+      municipio: "Barreiras",
+      condicao: "Preenchido",
+      situacao: "Em análise",
     },
     {
-      nome: "Em preenchimento",
-      uf: "Em preenchimento",
-      municipio: "Em preenchimento",
-      condicao: "-",
-      situacao: "-",
-    },
-    {
-      nome: "Em preenchimento",
-      uf: "Em preenchimento",
-      municipio: "Em preenchimento",
-      condicao: "-",
-      situacao: "-",
-    },
-    {
-      nome: "Em preenchimento",
-      uf: "Em preenchimento",
-      municipio: "Em preenchimento",
-      condicao: "-",
-      situacao: "-",
-    },
-    {
-      nome: "Em preenchimento",
-      uf: "Em preenchimento",
-      municipio: "Em preenchimento",
-      condicao: "-",
-      situacao: "-",
-    },
-    {
-      nome: "Em preenchimento",
-      uf: "Em preenchimento",
-      municipio: "Em preenchimento",
-      condicao: "-",
-      situacao: "-",
-    },
-    {
-      nome: "Teste sobreposição ...",
-      uf: "MG",
-      municipio: "Jaboticatubas",
-      condicao: "-",
-      situacao: "-",
-    },
-    {
-      nome: "teste_sobreposicao...",
-      uf: "MG",
-      municipio: "Alvinópolis",
-      condicao: "-",
-      situacao: "-",
-    },
+      nome: "Fazenda Esperança",
+      uf: "GO",
+      municipio: "Rio Verde",
+      condicao: "Preenchido",
+      situacao: "Aprovado",
+    }
   ];
 
   return (
@@ -141,21 +99,16 @@ export default function ListarImoveis() {
                 </p>
               </div>
               <button
-                onClick={() =>
-                  imovel.nome.includes("Teste sobreposição")
-                    ? navigate("/produtor/ficha")
-                    : navigate("/cadastrar-imovel")
-                }
+                onClick={() => {
+                  localStorage.setItem("imovelAtual", imovel.nome);
+                  navigate("/produtor");
+                }}
                 className="text-[#1351b4] font-bold flex items-center justify-center gap-2 border-t pt-4 hover:underline hover:text-blue-800 transition"
               >
                 <span className="material-symbols-outlined text-sm">
-                  {imovel.nome.includes("Teste sobreposição")
-                    ? "visibility"
-                    : "edit_document"}
+                  {"login"}
                 </span>
-                {imovel.nome.includes("Teste sobreposição")
-                  ? "Acessar Ficha do Imóvel"
-                  : "Continuar cadastro"}
+                {"Acessar Central do Produtor"}
               </button>
             </div>
           ))}

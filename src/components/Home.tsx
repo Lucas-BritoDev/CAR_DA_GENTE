@@ -10,20 +10,22 @@ export default function Home() {
   const [runTour, setRunTour] = useState(false);
 
   useEffect(() => {
-    setRunTour(true);
+    if (localStorage.getItem("tourSkipped") !== "true") {
+      setRunTour(true);
+    }
   }, []);
 
   const tourSteps: TourStep[] = [
     {
       target: 'center',
       title: "Boas-vindas ao CAR DA GENTE!",
-      content: "Eu sou a CARlinha, a sua guia! Vou te mostrar como a nossa plataforma simplifica o Cadastro Ambiental Rural. Esta é a página inicial, de onde você acessa todos os módulos de forma super rápida e fácil.",
+      content: "Eu sou a Carlinha, a nossa Inteligência Artificial do povo! Vou te mostrar como a nossa plataforma simplifica o Cadastro Ambiental Rural. Esta é a página inicial, de onde você acessa todos os módulos rapidim.",
       placement: "bottom"
     },
     {
       target: '[data-tour="header"]',
       title: "Avisos e Atalhos Rápidos",
-      content: "Aqui ficam os atalhos mais importantes. Se houver alguma pendência urgente no seu imóvel, como um déficit de Reserva Legal, nós te avisaremos logo de cara!",
+      content: "Aqui ficam os atalhos mais importantes. Se houver alguma pendência urgente no seu imóvel, a gente te avisa logo de cara, sem susto!",
       placement: "bottom"
     },
     {
@@ -35,20 +37,20 @@ export default function Home() {
     {
       target: '[data-tour="card-2"]',
       title: "Central do Proprietário / Possuidor",
-      content: "Neste módulo, o Seu Raimundo encontra o Laudo Cidadão, traduz suas notificações sem juridiquês e descobre como destravar seu Crédito Verde!",
+      content: "Neste módulo, o coração bate mais aliviado. O Laudo Cidadão traduz as notificações sem juridiquês e a Calculadora Financeira mostra, direto no bolso, a vantagem real e o dinheiro que rende ao estar em dia com a natureza!",
       placement: "bottom"
     },
 
     {
       target: '[data-tour="card-5"]',
       title: "MarCARtplace",
-      content: "O nosso mercado de cotas ambientais! Aqui conectamos quem tem floresta sobrando com quem precisa compensar sua área, gerando renda extra e preservação.",
+      content: "É o match da prosperidade no campo! A gente une quem precisa compensar a sua área com quem tem mata sobrando para vender.",
       placement: "bottom"
     },
     {
       target: '[data-tour="card-4"]',
-      title: "ComuniCAR",
-      content: "O coração do engajamento! Um espaço com paródias musicais, vídeos estilo TiCARtok, e materiais que as Lideranças Comunitárias podem baixar (Radinho da Terra).",
+      title: "Projeto CARcantado",
+      content: "O projeto CARcantado pulsando viva a nossa cultura! São paródias e músicas autorais que rodam nas rádios locais e vídeos no TikTok para engajar as roças do país.",
       placement: "bottom"
     }
   ];
@@ -60,7 +62,10 @@ export default function Home() {
     <div className="flex flex-col min-h-screen font-sans bg-gray-50 text-gray-900 overflow-x-hidden relative">
       <OnboardingTour
         isOpen={runTour}
-        onClose={() => setRunTour(false)}
+        onClose={() => {
+          setRunTour(false);
+          localStorage.setItem("tourSkipped", "true");
+        }}
         steps={tourSteps}
       />
 
@@ -183,7 +188,7 @@ export default function Home() {
                 <img src="/images/comunidade.png" alt="Comunidade" className="w-full h-full object-cover" />
               </div>
               <span className="text-xs text-center px-4 font-semibold text-gray-500 uppercase tracking-tight">
-                ComuniCAR Comunidade
+                Projeto CARcantado
               </span>
             </div>
             <div className="bg-[#2EAD4B] text-white text-center py-2 text-xs font-bold uppercase">
@@ -199,16 +204,16 @@ export default function Home() {
             style={{ animation: "marquee 20s linear infinite" }}
           >
             <span className="text-white text-sm font-medium mx-8">
-              🌿 Ei, produtor! Você tem excedente de vegetação nativa? Divulgue aqui no MarCARtplace!
+              🌿 Ei, compadre! Tem mata sobrando pra vender? Divulga rapidim aqui no MarCARtplace!
             </span>
             <span className="text-white text-sm font-medium mx-8">
-              💰 Transforme sua preservação em renda — cadastre suas Cotas de Reserva Ambiental (CRA)
+              💰 Transforme preservação em dinheiro no bolso — cadastre suas Cotas de Reserva Ambiental (CRA)! É o match da prosperidade no campo!
             </span>
             <span className="text-white text-sm font-medium mx-8">
-              🌿 Ei, produtor! Você tem excedente de vegetação nativa? Divulgue aqui no MarCARtplace!
+              🌿 Ei, compadre! Tem mata sobrando pra vender? Divulga rapidim aqui no MarCARtplace!
             </span>
             <span className="text-white text-sm font-medium mx-8">
-              💰 Transforme sua preservação em renda — cadastre suas Cotas de Reserva Ambiental (CRA)
+              💰 Transforme preservação em dinheiro no bolso — cadastre suas Cotas de Reserva Ambiental (CRA)! É o match da prosperidade no campo!
             </span>
           </div>
           <style>{`

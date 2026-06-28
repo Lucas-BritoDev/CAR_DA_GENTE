@@ -17,76 +17,15 @@ export default function Comunidade() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 font-sans text-gray-900">
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-        {/* Termômetro Verde (RF08) */}
-        <div className="md:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-lg shadow-lg border border-orange-100">
-            <h2 className="text-lg font-bold text-orange-900 mb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-orange-600">
-                thermometer
-              </span>
-              Termômetro Verde
-            </h2>
-            <p className="text-xs text-gray-500 mb-6 italic">
-              Dados agregados, proteção de privacidade ativa (nunca expõe o
-              associado individual).
-            </p>
-
-            {metas ? (
-              <div className="text-center">
-                <p className="text-sm font-bold text-gray-700 uppercase mb-2">
-                  Associação {metas.associacao}
-                </p>
-                <div className="relative w-48 h-48 mx-auto flex items-center justify-center">
-                  <svg
-                    className="w-full h-full transform -rotate-90"
-                    viewBox="0 0 100 100"
-                  >
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="#f3f4f6"
-                      strokeWidth="10"
-                      fill="none"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="#E65100"
-                      strokeWidth="10"
-                      fill="none"
-                      strokeDasharray={`${metas.porcentagem_regular * 2.51} 251`}
-                    />
-                  </svg>
-                  <div className="absolute flex flex-col items-center">
-                    <span className="text-4xl font-black text-orange-700">
-                      {metas.porcentagem_regular}%
-                    </span>
-                    <span className="text-[10px] font-bold text-gray-500 uppercase">
-                      Regularizados
-                    </span>
-                  </div>
-                </div>
-                <p className="mt-4 text-xs font-bold text-gray-600">
-                  {metas.total_produtores} Produtores na base
-                </p>
-              </div>
-            ) : (
-              <div className="animate-pulse bg-gray-200 h-48 rounded"></div>
-            )}
-          </div>
-        </div>
-
-        {/* Kit Radinho da Terra (RF07) */}
-        <div className="md:col-span-2 space-y-6">
+      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 max-w-4xl gap-6 md:gap-8">
+        {/* Projeto CARCANTADO */}
+        <div className="space-y-6">
           <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
             <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-[#E65100]">
                 radio
               </span>
-              Kit Radinho da Terra
+              Projeto CARCANTADO
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -140,8 +79,7 @@ export default function Comunidade() {
               Histórias da Terra
             </h2>
             <p className="text-xs text-gray-600 mb-4">
-              Envie seu relato (áudio, texto ou foto) e faça parte da nossa
-              galeria de preservadores.
+              Ei, produtor, envie seu relato resumido (áudio, texto ou foto) e faça parte do nosso próximo case do CARCantado!
             </p>
 
             <div className="flex gap-2 mb-4">

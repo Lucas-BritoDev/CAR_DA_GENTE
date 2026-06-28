@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Toast from "./Toast";
+import { listarImagensLocais } from "../motor/analisarImagem";
 
 export default function Analista() {
   const navigate = useNavigate();
@@ -11,11 +12,15 @@ export default function Analista() {
   const [toastMsg, setToastMsg] = useState("");
 
   const handleToast = (msg: string) => setToastMsg(msg);
+  const [imagensEvidencia, setImagensEvidencia] = useState<ReturnType<typeof listarImagensLocais>>([]);
 
   useEffect(() => {
     fetch("/api/db/documentos_analista")
       .then((res) => res.json())
       .then((data) => setDocumentos(data));
+
+    // Carrega imagens de evidência do localStorage
+    setImagensEvidencia(listarImagensLocais());
   }, []);
 
   const handleRodarSemaforo = async () => {
@@ -94,6 +99,65 @@ export default function Analista() {
               </span>
               🚥 Rodar Semáforo dos Estudos
             </button>
+          </div>
+
+          {/* Seção de evidências de campo */}
+          <div className="mt-6">
+            <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+              <span className="material-symbols-outlined text-sm text-green-600">photo_camera</span>
+              Evidências de Campo
+            </h3>
+
+            {imagensEvidencia.length === 0 ? (
+              <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4 text-center">
+                <span className="material-symbols-outlined text-gray-300 text-3xl">image_not_supported</span>
+                <p className="text-xs text-gray-400 mt-1">Nenhuma foto enviada pelo produtor ainda.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {imagensEvidencia.map((img) => (
+                  <div key={img.chave} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                    <img
+                      src={img.dataUrl}
+                      alt="Evidência de campo"
+                      className="w-full h-32 object-cover"
+                    />
+                    <div className="p-2">
+                      <div className="flex items-center justify-between">
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                          img.contexto === 'pendencia'
+                            ? 'bg-orange-100 text-orange-700'
+                            : img.contexto === 'retificacao'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-blue-100 text-blue-700'
+                        }`}>
+                          {img.contexto === 'pendencia' ? 'Pendência' : img.contexto === 'retificacao' ? 'Retificação' : 'Cadastro'}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {new Date(img.ts).toLocaleDateString('pt-BR')}
+                        </span>
+                      </div>
+                      <div className="flex gap-1 mt-2">
+                        <button
+                          type="button"
+                          onClick={() => handleToast('Evidência aprovada e registrada no laudo!')}
+                          className="flex-1 text-xs bg-green-600 text-white py-1 rounded font-bold hover:bg-green-700 transition"
+                        >
+                          ✅ Aprovar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleToast('Foto rejeitada. Produtor será notificado.')}
+                          className="flex-1 text-xs bg-red-500 text-white py-1 rounded font-bold hover:bg-red-700 transition"
+                        >
+                          ❌ Rejeitar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

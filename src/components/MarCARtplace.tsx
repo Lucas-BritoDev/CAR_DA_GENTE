@@ -264,7 +264,7 @@ export default function MarCARtplace() {
                     </p>
                     <p className="text-[#00d053] text-sm font-semibold mb-2 flex items-center gap-1">
                       <span className="material-symbols-outlined text-sm">verified</span>
-                      Validado pelo CAR DA GENTE
+                      Garantido pelo CAR da Gente
                     </p>
 
                     <h3 className="text-sm font-normal text-gray-700 mb-2 line-clamp-2 h-10">
@@ -432,7 +432,7 @@ export default function MarCARtplace() {
                     <div>
                       <h4 className="font-bold text-blue-900 text-xs">Transação Segura</h4>
                       <p className="text-[11px] text-blue-800 mt-0.5 leading-tight">
-                        O CAR DA GENTE garante que os dados deste imóvel batem com o SICAR e que não há embargos ou sobreposições.
+                        O CAR da Gente garante que os dados deste imóvel batem certinho com o SICAR, sem embargos ou sobreposições. Pode confiar, sô!
                       </p>
                     </div>
                   </div>
@@ -451,7 +451,7 @@ export default function MarCARtplace() {
                 
                 <div className="flex items-center gap-1 text-[#00d053] text-xs font-bold mb-4 bg-green-50 w-fit px-2 py-0.5 rounded border border-green-200">
                   <span className="material-symbols-outlined text-sm">verified</span>
-                  Validado pelo CAR DA GENTE
+                  Garantido pelo CAR da Gente
                 </div>
                 
                 <div className="mb-5">
@@ -486,21 +486,21 @@ export default function MarCARtplace() {
                     className="w-full bg-[#25D366] hover:bg-[#1ebd5b] text-white font-bold py-2.5 px-3 text-sm rounded flex items-center justify-center gap-2 transition shadow-sm"
                   >
                     <span className="material-symbols-outlined text-lg">chat</span>
-                    Falar pelo WhatsApp
+                    Mandar um "Zap" direto
                   </button>
                   <button 
                     onClick={() => window.location.href = 'tel:71999500774'}
                     className="w-full bg-white border-2 border-[#1351b4] text-[#1351b4] hover:bg-blue-50 font-bold py-2 px-3 text-sm rounded flex items-center justify-center gap-2 transition shadow-sm"
                   >
                     <span className="material-symbols-outlined text-lg">call</span>
-                    Ligar para o Vendedor
+                    Ligar rapidim
                   </button>
                 </div>
 
                 <div className="mt-4 text-center">
                   <p className="text-[10px] text-gray-500 flex items-center justify-center gap-1">
                     <span className="material-symbols-outlined text-xs">security</span>
-                    Sua compra está protegida pelo CAR DA GENTE.
+                    Fica sossegado, sua compra está protegida pelo CAR da Gente.
                   </p>
                 </div>
               </div>

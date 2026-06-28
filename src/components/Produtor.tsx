@@ -5,26 +5,43 @@ import "leaflet/dist/leaflet.css";
 import Toast from "./Toast";
 import { analisar } from "../motor/laudo";
 import { sitioBoaEsperancaInput } from "../fixtures/sitio_boa_esperanca";
+import AnaliseImagemModal from "./AnaliseImagemModal";
+import type { ResultadoAnalise } from "../motor/analisarImagem";
+import SeloProcedencia from "./shared/SeloProcedencia";
+import ResultadoAnaliseCard from "./shared/ResultadoAnaliseCard";
 
 export default function Produtor() {
   const navigate = useNavigate();
+  const imovelSelecionado = localStorage.getItem("imovelAtual") || "Sítio Boa Esperança";
   const [documentos, setDocumentos] = useState<any[]>([]);
   const [laudo, setLaudo] = useState<any>(null);
   const [minuta, setMinuta] = useState<string | null>(null);
   const [camadas, setCamadas] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<"laudo" | "mapa" | "calc" | "selo" | "zap">(
+  const [activeTab, setActiveTab] = useState<"laudo" | "calc" | "selo" | "zap">(
     "laudo",
   );
+  const [valorCredito, setValorCredito] = useState<number>(150000);
   const [toastMsg, setToastMsg] = useState("");
+  const [showAnaliseModal, setShowAnaliseModal] = useState(false);
+  const [analisePendencia, setAnalisePendencia] = useState<ResultadoAnalise | null>(null);
 
   const handleToast = (msg: string) => setToastMsg(msg);
 
   useEffect(() => {
-    // Simula a resposta do backend localmente para rodar 100% na Vercel
-    setDocumentos([
-      { id: 1, imovel_id: "sitio_boa_esperanca_001", titulo: "Notificação de Regularização de APP e RL", status: "pendente", quero_entender: true, data: "2026-06-20" }
-    ]);
-  }, []);
+    if (imovelSelecionado === "Fazenda CAR da Gente") {
+      setDocumentos([
+        { id: 2, titulo: "Cadastro aguardando análise", status: "em_analise", isCarDaGente: true, data: "2026-06-25" }
+      ]);
+    } else if (imovelSelecionado === "Fazenda Esperança") {
+      setDocumentos([
+        { id: 3, titulo: "Cadastro Aprovado", status: "aprovado", isEsperanca: true, data: "2026-05-10" }
+      ]);
+    } else {
+      setDocumentos([
+        { id: 1, imovel_id: "sitio_boa_esperanca_001", titulo: "Notificação de Regularização de APP e RL", status: "pendente", quero_entender: true, data: "2026-06-20" }
+      ]);
+    }
+  }, [imovelSelecionado]);
 
   const handleQueroEntender = async () => {
     // Roda o motor determinístico localmente no frontend!
@@ -67,6 +84,42 @@ export default function Produtor() {
                 <p className="text-xs text-gray-500 mt-1">
                   Enviado em {doc.data}
                 </p>
+                                {doc.isCarDaGente && (
+                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg relative overflow-hidden">
+                    <div className="flex gap-3 items-center relative z-10">
+                      <div className="w-10 h-10 rounded-full border-2 border-blue-200 shrink-0 shadow-md overflow-hidden bg-white">
+                        <img src="/carlinha.png" alt="CARlinha" className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-blue-900 font-bold mb-1">
+                          "Ô compadre, ocê já fez sua parte! O cadastro tá todo certinho e agora tá com os analistas. Fica sossegado que qualquer novidade eu te dou um grito aqui, viu?"
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {doc.isEsperanca && (
+                  <div className="mt-4">
+                    <div className="bg-white border border-green-200 rounded-lg p-4 mx-auto max-w-sm shadow-sm relative z-10">
+                      <div className="w-20 h-20 mx-auto rounded-full bg-green-100 border-4 border-green-500 flex items-center justify-center mb-3">
+                        <span className="material-symbols-outlined text-4xl text-green-700">verified</span>
+                      </div>
+                      <p className="text-lg text-center font-bold text-green-800">Selo Carimbo Verde</p>
+                      <p className="text-xs text-center text-gray-500 uppercase tracking-wide">Fazenda Esperança</p>
+                      <div className="mt-2 text-center">
+                        <button 
+                          onClick={() => {
+                            handleQueroEntender();
+                            setActiveTab("selo");
+                          }}
+                          className="inline-block bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-4 py-2 rounded shadow-sm transition"
+                        >
+                          VER SELO
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {doc.quero_entender && (
                   <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-400 opacity-10 animate-pulse"></div>
@@ -76,10 +129,10 @@ export default function Produtor() {
                       </div>
                       <div>
                         <p className="text-xs font-bold text-blue-900 leading-tight mb-1">
-                          Você gostaria de acionar nosso simplificador?
+                          Posso te ajudar a entender essas pendências, sô?
                         </p>
                         <p className="text-[10px] text-blue-800">
-                          Entenda suas pendências e saiba o que fazer a seguir de forma simples.
+                          Eu sento na mesa da cozinha contigo e explico a lei de um jeito clarinho e tranquilo.
                         </p>
                       </div>
                     </div>
@@ -88,10 +141,25 @@ export default function Produtor() {
                       className="mt-3 w-full bg-blue-600 text-white text-xs font-bold uppercase py-2 rounded flex items-center justify-center gap-2 hover:bg-blue-700 transition relative z-10 shadow"
                     >
                       <span className="material-symbols-outlined text-sm">
-                        gavel
+                        record_voice_over
                       </span>
-                      Acionar Simplificador de Lei
+                      Chamar a Carlinha
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowAnaliseModal(true)}
+                      className="mt-2 w-full bg-green-600 text-white text-xs font-bold uppercase py-2 rounded flex items-center justify-center gap-2 hover:bg-green-700 transition relative z-10 shadow"
+                    >
+                      <span className="material-symbols-outlined text-sm">photo_camera</span>
+                      {analisePendencia ? "Enviar outra foto" : "📷 Enviar foto como evidência"}
+                    </button>
+                    {analisePendencia && (
+                      <ResultadoAnaliseCard
+                        resultado={analisePendencia}
+                        onEnviarOutra={() => setShowAnaliseModal(true)}
+                      />
+                    )}
                   </div>
                 )}
               </div>
@@ -105,30 +173,31 @@ export default function Produtor() {
             <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full border border-gray-200">
               {/* Tabs */}
               <div className="flex border-b border-gray-200 bg-gray-50 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden">
-                <button
-                  onClick={() => setActiveTab("laudo")}
-                  className={`flex-1 min-w-max px-4 py-3 text-xs font-bold uppercase ${activeTab === "laudo" ? "bg-white text-blue-700 border-t-2 border-blue-700" : "text-gray-500 hover:bg-gray-100"}`}
-                >
-                  Laudo Cidadão
-                </button>
-                <button
-                  onClick={() => setActiveTab("mapa")}
-                  className={`flex-1 min-w-max px-4 py-3 text-xs font-bold uppercase ${activeTab === "mapa" ? "bg-white text-blue-700 border-t-2 border-blue-700" : "text-gray-500 hover:bg-gray-100"}`}
-                >
-                  Ver no Chão da Terra
-                </button>
-                <button
-                  onClick={() => setActiveTab("calc")}
-                  className={`flex-1 min-w-max px-4 py-3 text-xs font-bold uppercase ${activeTab === "calc" ? "bg-white text-blue-700 border-t-2 border-blue-700" : "text-gray-500 hover:bg-gray-100"}`}
-                >
-                  💰 Destravar meu Crédito Verde
-                </button>
-                <button
-                  onClick={() => setActiveTab("selo")}
-                  className={`flex-1 min-w-max px-4 py-3 text-xs font-bold uppercase ${activeTab === "selo" ? "bg-white text-blue-700 border-t-2 border-blue-700" : "text-gray-500 hover:bg-gray-100"}`}
-                >
-                  🏅 CARimbo Verde
-                </button>
+                {imovelSelecionado !== "Fazenda Esperança" && (
+                  <>
+                    <button
+                      onClick={() => setActiveTab("laudo")}
+                      className={`flex-1 min-w-max px-4 py-3 text-xs font-bold uppercase ${activeTab === "laudo" ? "bg-white text-blue-700 border-t-2 border-blue-700" : "text-gray-500 hover:bg-gray-100"}`}
+                    >
+                      Resumo Atual
+                    </button>
+                    
+                    <button
+                      onClick={() => setActiveTab("calc")}
+                      className={`flex-1 min-w-max px-4 py-3 text-xs font-bold uppercase ${activeTab === "calc" ? "bg-white text-blue-700 border-t-2 border-blue-700" : "text-gray-500 hover:bg-gray-100"}`}
+                    >
+                      💰 calculadora financeira
+                    </button>
+                  </>
+                )}
+                {imovelSelecionado === "Fazenda Esperança" && (
+                  <button
+                    onClick={() => setActiveTab("selo")}
+                    className={`flex-1 min-w-max px-4 py-3 text-xs font-bold uppercase ${activeTab === "selo" ? "bg-white text-blue-700 border-t-2 border-blue-700" : "text-gray-500 hover:bg-gray-100"}`}
+                  >
+                    🏅 CARimbo Verde
+                  </button>
+                )}
               </div>
 
               {/* Tab Content */}
@@ -261,209 +330,6 @@ export default function Produtor() {
                         Retificar CAR no CAR DA GENTE
                       </button>
                     </div>
-                  </div>
-                )}
-
-                {activeTab === "mapa" && (
-                  <div className="flex flex-col h-full">
-                    <p className="text-gray-600 text-sm mb-4">
-                      Veja as áreas de preservação calculadas pelo motor
-                      determinístico no seu imóvel.
-                    </p>
-                    <div className="w-full flex-1 min-h-[400px] bg-gray-200 rounded-lg relative overflow-hidden border border-gray-300">
-                      {camadas ? (
-                        <MapContainer
-                          bounds={[
-                            [-15.825, -47.925],
-                            [-15.81, -47.91],
-                          ]}
-                          zoom={15}
-                          style={{ height: "100%", width: "100%" }}
-                        >
-                          <TileLayer
-                            attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
-                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                          />
-                          <GeoJSON
-                            data={camadas}
-                            style={(feature: any) => {
-                              switch (feature?.properties?.zona) {
-                                case "imovel":
-                                  return {
-                                    color: "#eab308", // Yellow like official CAR
-                                    weight: 3,
-                                    fillOpacity: 0.1,
-                                  };
-                                case "app":
-                                  return {
-                                    color: "#10b981",
-                                    weight: 0,
-                                    fillOpacity: 0.4,
-                                  };
-                                case "reserva_legal":
-                                  return {
-                                    color: "#22c55e",
-                                    weight: 0,
-                                    fillOpacity: 0.4,
-                                  };
-                                case "passivo":
-                                  return {
-                                    color: "#ef4444",
-                                    weight: 0,
-                                    fillOpacity: 0.5,
-                                  };
-                                default:
-                                  return { color: "#9ca3af" };
-                              }
-                            }}
-                            onEachFeature={(feature, layer) => {
-                              if (
-                                feature.properties &&
-                                feature.properties.zona
-                              ) {
-                                let popupContent = "";
-                                if (feature.properties.zona === "app") {
-                                  popupContent = `<strong>Área de Preservação Permanente (APP)</strong><br/>Desta cerca até a margem do rio é APP — para o tamanho do seu imóvel (Art. 61-A) recomponha 15 m de nativas.`;
-                                } else if (
-                                  feature.properties.zona === "passivo"
-                                ) {
-                                  popupContent = `<strong>Passivo Ambiental</strong><br/>Área com déficit de vegetação nativa.`;
-                                } else {
-                                  popupContent = `<strong>Zona: ${feature.properties.zona}</strong>`;
-                                }
-                                layer.bindPopup(popupContent);
-                              }
-                            }}
-                          />
-                        </MapContainer>
-                      ) : (
-                        <div className="flex items-center justify-center h-full text-center p-4">
-                          <span className="font-bold text-gray-500">
-                            Nenhum dado geográfico carregado.
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === "calc" && (
-                  <div className="space-y-4">
-                    <div className="bg-yellow-50 border border-yellow-200 p-4 rounded">
-                      <p className="text-xs text-yellow-800 font-bold uppercase">
-                        ⚠️ Simulação Ilustrativa — Calculadora Financeira (RF03)
-                      </p>
-                      <p className="text-sm text-yellow-900 mt-1">
-                        Demonstra ao produtor o impacto financeiro real: o quanto perde por não regularizar vs. o quanto ganha com o Selo CARimbo Verde.
-                      </p>
-                    </div>
-
-                    {/* Antes vs Depois */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* ANTES */}
-                      <div className="border-2 border-red-200 bg-red-50 rounded-lg p-4 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <span className="material-symbols-outlined text-red-500">block</span>
-                          <h4 className="text-sm font-bold text-red-700 uppercase">Antes — Situação Irregular</h4>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Crédito Rural (Pronaf)</span>
-                            <span className="font-bold text-red-500">BLOQUEADO</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Taxa de juros</span>
-                            <span className="font-bold text-red-500">12,5% a.a.</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Pronaf ABC Verde</span>
-                            <span className="font-bold text-red-500">Inelegível</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Seguro Agrícola</span>
-                            <span className="font-bold text-red-500">Negado</span>
-                          </div>
-                          <div className="border-t pt-2 mt-2">
-                            <div className="flex justify-between">
-                              <span className="text-sm font-bold text-gray-700">Valor disponível</span>
-                              <span className="text-xl font-bold text-red-500">R$ 0,00</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* DEPOIS */}
-                      <div className="border-2 border-green-200 bg-green-50 rounded-lg p-4 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <span className="material-symbols-outlined text-green-600">check_circle</span>
-                          <h4 className="text-sm font-bold text-green-700 uppercase">Depois — Regularizado + PRA</h4>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Crédito Rural (Pronaf)</span>
-                            <span className="font-bold text-green-600">LIBERADO</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Taxa de juros</span>
-                            <span className="font-bold text-green-600">3,0% a.a.</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Pronaf ABC Verde</span>
-                            <span className="font-bold text-green-600">Elegível</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Seguro Agrícola</span>
-                            <span className="font-bold text-green-600">Aprovado</span>
-                          </div>
-                          <div className="border-t pt-2 mt-2">
-                            <div className="flex justify-between">
-                              <span className="text-sm font-bold text-gray-700">Valor disponível</span>
-                              <span className="text-xl font-bold text-green-600">R$ 150.000,00</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Economia total */}
-                    <div className="bg-gradient-to-r from-green-600 to-green-800 text-white rounded-lg p-4 text-center">
-                      <p className="text-xs uppercase font-bold opacity-80">Economia estimada em juros (5 anos)</p>
-                      <p className="text-3xl font-bold mt-1">R$ 47.500,00</p>
-                      <p className="text-xs mt-2 opacity-70">Regularizar não é custo — é investimento.</p>
-                    </div>
-
-                    <button
-                      onClick={() => setActiveTab("laudo")}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition flex items-center justify-center gap-2"
-                    >
-                      <span className="material-symbols-outlined text-sm">description</span>
-                      Ver meu Laudo Cidadão para regularizar
-                    </button>
-                  </div>
-                )}
-
-                {activeTab === "selo" && (
-                  <div className="space-y-4 animate-fade-in">
-                    {/* Selo CARimbo Verde */}
-                    <div className="bg-gradient-to-b from-green-50 to-white border-2 border-green-500 rounded-xl p-6 text-center space-y-4 shadow-lg relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-green-200 rounded-full blur-3xl opacity-50 -z-10"></div>
-                      <div className="text-6xl animate-bounce">🏆</div>
-                      <h3 className="text-2xl font-black text-green-800 uppercase tracking-tight">Parabéns! Você ganhou o<br />Selo CARimbo Verde!</h3>
-                      <p className="text-sm text-gray-700 max-w-md mx-auto font-medium">
-                        Você completou todas as etapas e compreendeu suas pendências. Seu imóvel está no caminho certo para a regularização 100%.
-                      </p>
-
-                      <div className="bg-white border border-green-200 rounded-lg p-4 mx-auto max-w-sm shadow-sm relative z-10">
-                        <div className="w-20 h-20 mx-auto rounded-full bg-green-100 border-4 border-green-500 flex items-center justify-center mb-3">
-                          <span className="material-symbols-outlined text-4xl text-green-700">verified</span>
-                        </div>
-                        <p className="text-lg font-bold text-green-800">Sítio Boa Esperança</p>
-                        <p className="text-xs text-gray-500 uppercase tracking-wide">Seu Raimundo da Silva</p>
-                        <div className="mt-2 inline-block bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                          SELO ATIVO
-                        </div>
-                      </div>
-                    </div>
 
                     {/* CARtas na manga (Upsell) */}
                     <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-md mt-6 relative overflow-hidden">
@@ -474,17 +340,17 @@ export default function Produtor() {
                         </div>
                         <div className="text-left flex-1">
                           <h4 className="text-lg font-black text-blue-900 mb-1">Ei, Raimundo! Identificamos oportunidades.</h4>
-                          <p className="text-sm text-blue-800 font-medium mb-3">Ver <span className="font-bold underline decoration-wavy decoration-blue-500">CARtas na manga</span>:</p>
+                          <p className="text-sm text-blue-800 font-medium mb-3">Ver <span className="font-bold">CARtas na manga</span>:</p>
                           <div className="bg-white p-5 rounded-lg border border-blue-100 shadow-sm">
                             <p className="text-sm text-gray-700 mb-4">
                               Você possui <strong className="text-green-700 text-base">4,2 ha (42.000 m²)</strong> de terras excedentes que pode vender para compensação.
                             </p>
                             <p className="text-sm font-bold text-gray-800 mb-3">
-                              Gostaria de publicar no nosso MarCARtplace?
+                              Gostaria de pedir à CARlinha pra buscar vizinhos no MarCARtplace pra você compensar?
                             </p>
                             <div className="flex gap-3">
                               <button
-                                onClick={() => { handleToast("A IA já preencheu seus dados. Redirecionando..."); setTimeout(() => navigate('/marketplace'), 2500); }}
+                                onClick={() => { localStorage.setItem("novaCota", "true"); handleToast("Publicando no MarCARtplace com as informações e foto da simulação de Raimundo..."); setTimeout(() => navigate('/marketplace'), 2500); }}
                                 className="bg-green-600 text-white font-bold py-2.5 px-6 rounded hover:bg-green-700 transition shadow flex-1 sm:flex-none text-center"
                               >
                                 SIM
@@ -495,12 +361,131 @@ export default function Produtor() {
                             </div>
                             <div className="mt-4 bg-gray-50 border-l-4 border-blue-400 p-2 text-[11px] text-gray-600 flex items-center gap-2">
                               <span className="material-symbols-outlined text-blue-500 text-sm">auto_awesome</span>
-                              A IA pode ajudar no preenchimento e ele já está lá na plataforma.
+                              A CARlinha pode ajudar no preenchimento e ele já está lá na plataforma.
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
+                  </div>
+                )}
+
+                                {activeTab === "calc" && (
+                  <div className="space-y-4 animate-fade-in">
+                    <div className="bg-yellow-50 border border-yellow-200 p-4 rounded">
+                      <p className="text-xs text-yellow-800 font-bold uppercase">
+                        ⚠️ Simulador de Benefícios Financeiros
+                      </p>
+                      <p className="text-sm text-yellow-900 mt-1">
+                        Veja o quanto você perde de dinheiro por não regularizar sua terra, e o quanto ganha botando a mão na consciência e ativando seu Selo CARimbo Verde!
+                      </p>
+                    </div>
+
+                    <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm">
+                      <label className="block text-sm font-bold text-gray-700 mb-2">Qual o valor do crédito rural (Pronaf) que você precisa, sô?</label>
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="text-gray-500 font-bold">R$</span>
+                        <input 
+                          type="range" 
+                          min="10000" 
+                          max="300000" 
+                          step="5000"
+                          value={valorCredito} 
+                          onChange={(e) => setValorCredito(Number(e.target.value))} 
+                          className="flex-1 accent-green-600"
+                        />
+                        <span className="text-blue-700 font-bold w-24 text-right">
+                          {valorCredito.toLocaleString('pt-BR')}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* ANTES */}
+                      <div className="border-2 border-red-200 bg-red-50 rounded-lg p-4 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <span className="material-symbols-outlined text-red-500">block</span>
+                          <h4 className="text-sm font-bold text-red-700 uppercase">Imóvel Irregular</h4>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Crédito (Pronaf)</span>
+                            <span className="font-bold text-red-500">BLOQUEADO</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Taxa de Juros</span>
+                            <span className="font-bold text-red-500">12,5% a.a.</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Juros Pago em 5 anos</span>
+                            <span className="font-bold text-red-500">
+                              R$ {((valorCredito * 0.125 * 5)).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* DEPOIS */}
+                      <div className="border-2 border-green-200 bg-green-50 rounded-lg p-4 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <span className="material-symbols-outlined text-green-600">check_circle</span>
+                          <h4 className="text-sm font-bold text-green-700 uppercase">Com Selo Verde</h4>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Crédito (Pronaf ABC)</span>
+                            <span className="font-bold text-green-600">LIBERADO</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Taxa de Juros Especial</span>
+                            <span className="font-bold text-green-600">3,0% a.a.</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Juros Pago em 5 anos</span>
+                            <span className="font-bold text-green-600">
+                              R$ {((valorCredito * 0.03 * 5)).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-green-600 to-green-800 text-white rounded-lg p-4 text-center shadow-lg">
+                      <p className="text-xs uppercase font-bold opacity-80">Dinheiro que fica no seu bolso (Economia em 5 anos)</p>
+                      <p className="text-3xl font-black mt-1 text-yellow-300">
+                        R$ {((valorCredito * 0.125 * 5) - (valorCredito * 0.03 * 5)).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                      </p>
+                      <p className="text-xs mt-2 opacity-90">E aí, compadre? Vai rasgar dinheiro até quando? Regularizar não é custo — é lucro garantido!</p>
+                    </div>
+
+
+
+                  </div>
+                )}
+
+                {activeTab === "selo" && (
+                  <div className="space-y-4 animate-fade-in">
+                    {/* Selo CARimbo Verde */}
+                    <div className="bg-gradient-to-b from-green-50 to-white border-2 border-green-500 rounded-xl p-6 text-center space-y-4 shadow-lg relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-green-200 rounded-full blur-3xl opacity-50 -z-10"></div>
+                      <div className="text-6xl animate-bounce">🏆</div>
+                      <h3 className="text-2xl font-black text-green-800 uppercase tracking-tight">Pode ficar amostradin entre os vizins!</h3>
+                      <p className="text-sm text-gray-700 max-w-md mx-auto font-medium">
+                        Você tá com a <strong>{imovelSelecionado}</strong> 100% regular! Baixe aqui seu selo em PDF.
+                      </p>
+
+                      <div className="bg-white border border-green-200 rounded-lg p-4 mx-auto max-w-sm shadow-sm relative z-10">
+                        <div className="w-20 h-20 mx-auto rounded-full bg-green-100 border-4 border-green-500 flex items-center justify-center mb-3">
+                          <span className="material-symbols-outlined text-4xl text-green-700">verified</span>
+                        </div>
+                        <p className="text-lg font-bold text-green-800">{imovelSelecionado}</p>
+                        <p className="text-xs text-gray-500 uppercase tracking-wide">Seu Raimundo da Silva</p>
+                        <div className="mt-2 inline-block bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                          SELO ATIVO
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 )}
               </div>
@@ -514,10 +499,14 @@ export default function Produtor() {
 
                 <div className="flex flex-col xl:flex-row justify-between items-start gap-4 mb-6">
                   <div>
-                    <h3 className="text-green-700 font-bold text-lg uppercase">SÍTIO BOA ESPERANÇA - (Fronteira/MG)</h3>
+                    <h3 className="text-green-700 font-bold text-lg uppercase">
+                      {imovelSelecionado === "Fazenda CAR da Gente" ? "FAZENDA CAR DA GENTE - (BARREIRAS/BA)" :
+                       imovelSelecionado === "Fazenda Esperança" ? "FAZENDA ESPERANÇA - (RIO VERDE/GO)" :
+                       "SÍTIO BOA ESPERANÇA - (FRONTEIRA/MG)"}
+                    </h3>
                     <p className="text-xs text-gray-500 mt-1">MG-3126709-2FA0F208DAE241250A05195D6882FB7C</p>
                     <div className="flex flex-col gap-1 mt-2 text-sm">
-                      <a href="#" className="text-green-700 underline">Alterar Imóvel Selecionado</a>
+                      <a href="#" onClick={(e) => { e.preventDefault(); navigate("/listar-imoveis"); }} className="text-green-700 underline cursor-pointer">Alterar Imóvel Selecionado</a>
                       <a href="#" className="text-green-700 underline">Complementar dados do Proprietário/Possuidor</a>
                     </div>
                   </div>
@@ -548,13 +537,18 @@ export default function Produtor() {
 
                 <div className="border border-gray-200 rounded">
                   <div className="bg-gray-100 p-3 border-b border-gray-200 flex justify-between items-center">
-                    <span className="text-sm font-bold text-gray-700">Demonstrativo da Situação das Informações Declaradas no CAR</span>
+                    <span className="text-sm font-bold text-gray-700">Situação das Informações Declaradas no CAR</span>
                     <button className="bg-[#4CAF50] text-white p-1 rounded hover:bg-green-600"><span className="material-symbols-outlined text-sm">description</span></button>
                   </div>
                   <div className="p-4 text-xs space-y-6">
                     <div>
                       <div className="flex items-center gap-2 mb-1"><span className="text-gray-500">Situação do Cadastro:</span> <span className="bg-[#4CAF50] text-white font-bold px-2 py-0.5 rounded text-[10px]">Ativo</span></div>
-                      <div className="flex items-center gap-2"><span className="text-gray-500">Condição Extrema:</span> <span className="font-bold text-gray-700">Em análise</span></div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500">Condição Extrema:</span> 
+                        <span className="font-bold text-gray-700">
+                          {imovelSelecionado === "Fazenda Esperança" ? "-" : "Em análise"}
+                        </span>
+                      </div>
                     </div>
 
                     <div>
@@ -563,7 +557,11 @@ export default function Produtor() {
                         <div className="space-y-1">
                           <div className="flex justify-between"><span className="text-gray-500">Área do Imóvel Rural:</span> <span className="font-bold text-gray-700">50,0000 ha</span></div>
                           <div className="flex justify-between"><span className="text-gray-500">Módulos fiscais:</span> <span className="font-bold text-gray-700">2,09</span></div>
-                          <div className="flex justify-between"><span className="text-gray-500">Município / UF:</span> <span className="font-bold text-gray-700">Fronteira(MG)</span></div>
+                          <div className="flex justify-between"><span className="text-gray-500">Município / UF:</span> <span className="font-bold text-gray-700">
+                          {imovelSelecionado === "Fazenda CAR da Gente" ? "Barreiras(BA)" :
+                           imovelSelecionado === "Fazenda Esperança" ? "Rio Verde(GO)" :
+                           "Fronteira(MG)"}
+                        </span></div>
                           <div className="flex justify-between"><span className="text-gray-500">Coordenadas Geográficas do Centroide:</span> <span className="font-bold text-gray-700 text-right">Lat: 20°16'37.41" S<br />Long: 49°11'27.13" O</span></div>
                         </div>
                         <div className="space-y-1">
@@ -650,6 +648,19 @@ export default function Produtor() {
       </main>
 
       {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg("")} />}
+
+      {/* Modal de análise de imagem — Pendência */}
+      {showAnaliseModal && (
+        <AnaliseImagemModal
+          contexto="pendencia"
+          onClose={() => setShowAnaliseModal(false)}
+          onAnalise={(res) => {
+            setAnalisePendencia(res);
+            setShowAnaliseModal(false);
+            handleToast("Foto enviada como evidência! Um analista vai verificar.");
+          }}
+        />
+      )}
     </div>
   );
 }

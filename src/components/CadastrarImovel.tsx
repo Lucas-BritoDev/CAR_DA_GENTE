@@ -3,6 +3,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Toast from "./Toast";
 import SemaforoBadge from "./shared/SemaforoBadge";
 import SimplificadorBanner from "./SimplificadorBanner";
+import AnaliseImagemModal from "./AnaliseImagemModal";
+import type { ResultadoAnalise } from "../motor/analisarImagem";
+import ResultadoAnaliseCard from "./shared/ResultadoAnaliseCard";
 
 export default function CadastrarImovel() {
   const navigate = useNavigate();
@@ -13,6 +16,8 @@ export default function CadastrarImovel() {
   const [showGamification, setShowGamification] = useState(false);
   const [searchParams] = useSearchParams();
   const isRetificacao = searchParams.get("retificar") === "true";
+  const [showAnaliseModal, setShowAnaliseModal] = useState(false);
+  const [analiseGeo, setAnaliseGeo] = useState<ResultadoAnalise | null>(null);
 
   const steps = [
     { label: "IDENTIFICAÇÃO" },
@@ -484,8 +489,39 @@ export default function CadastrarImovel() {
                 </div>
               </div>
 
+                {/* Botão de análise de imagem */}
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-full border-2 border-blue-200 shrink-0 overflow-hidden bg-white shadow">
+                    <img src="/carlinha.png" alt="CARlinha" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-blue-900">Tem algo no terreno que quer mostrar?</p>
+                    <p className="text-xs text-blue-700 mt-0.5">Tire uma foto do seu imóvel e a CARlinha identifica água, mata, cerca e mais!</p>
+                  </div>
+                </div>
+
+                {!analiseGeo && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAnaliseModal(true)}
+                    className="w-full flex items-center justify-center gap-2 bg-[#1351b4] text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-800 transition shadow min-h-[48px]"
+                  >
+                    <span className="material-symbols-outlined text-sm">photo_camera</span>
+                    📷 Enviar foto do imóvel
+                  </button>
+                )}
+
+                {analiseGeo && (
+                  <ResultadoAnaliseCard
+                    resultado={analiseGeo}
+                    onEnviarOutra={() => setShowAnaliseModal(true)}
+                  />
+                )}
+              </div>
+
               {isRetificacao && (
-                <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded animate-fade-in">
+                <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded animate-fade-in">
                   <p className="text-sm font-bold text-yellow-800 mb-2 flex items-center gap-2">
                     <span className="material-symbols-outlined text-sm">engineering</span> Ação necessária: Ajuste de Reserva Legal
                   </p>
@@ -506,6 +542,19 @@ export default function CadastrarImovel() {
               <button className="px-6 py-2 bg-[#1351b4] text-white rounded-full text-sm font-bold" onClick={() => setActiveStep(5)}>Próximo</button>
             </div>
           </div>
+        )}
+
+        {/* Modal de análise de imagem — Cadastro */}
+        {showAnaliseModal && (
+          <AnaliseImagemModal
+            contexto="cadastro"
+            onClose={() => setShowAnaliseModal(false)}
+            onAnalise={(res) => {
+              setAnaliseGeo(res);
+              setShowAnaliseModal(false);
+              handleToast("Foto registrada com sucesso!");
+            }}
+          />
         )}
 
         {activeStep === 5 && (
