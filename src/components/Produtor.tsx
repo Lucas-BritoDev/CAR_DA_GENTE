@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Toast from "./Toast";
+import { analisar } from "../motor/laudo";
+import { sitioBoaEsperancaInput } from "../fixtures/sitio_boa_esperanca";
 
 export default function Produtor() {
   const navigate = useNavigate();
@@ -18,30 +20,33 @@ export default function Produtor() {
   const handleToast = (msg: string) => setToastMsg(msg);
 
   useEffect(() => {
-    fetch("/api/db/documentos_pendentes")
-      .then((res) => res.json())
-      .then((data) => setDocumentos(data));
+    // Simula a resposta do backend localmente para rodar 100% na Vercel
+    setDocumentos([
+      { id: 1, imovel_id: "sitio_boa_esperanca_001", titulo: "Notificação de Regularização de APP e RL", status: "pendente", quero_entender: true, data: "2026-06-20" }
+    ]);
   }, []);
 
   const handleQueroEntender = async () => {
-    const res = await fetch("/api/analisar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({}),
-    });
-    const data = await res.json();
-    setLaudo(data);
+    // Roda o motor determinístico localmente no frontend!
+    const laudoData = analisar(sitioBoaEsperancaInput);
+    setLaudo(laudoData);
 
-    // Fetch geo layers
-    const resGeo = await fetch("/api/geo/camadas/sitio_boa_esperanca_001");
-    const dataGeo = await resGeo.json();
-    setCamadas(dataGeo);
+    // Mock geo layers
+    setCamadas({
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          geometry: sitioBoaEsperancaInput.geometria.geometry,
+          properties: { zona: "imovel" }
+        }
+      ]
+    });
   };
 
   const handleGerarMinuta = async () => {
-    const res = await fetch("/api/pra/minuta", { method: "POST" });
-    const data = await res.json();
-    setMinuta(data.minuta);
+    // Simula a geração da minuta
+    setMinuta("Eu, Raimundo, portador do CPF XXX, comprometo-me a recompor 15m de APP e compensar 4.2ha de RL via CRA conforme as leis estipuladas no laudo Cidadão.");
   };
 
   return (
