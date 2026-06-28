@@ -190,3 +190,9 @@ html {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Preserve Material Icons font regardless of active profiles */
+.a11y-wrapper .material-symbols-outlined,
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+}
