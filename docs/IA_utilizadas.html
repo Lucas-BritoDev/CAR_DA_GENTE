@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uso de Inteligência Artificial - CAR da Gente</title>
+    <style>
+        :root {
+            --primary: #16a34a; /* green-600 */
+            --primary-dark: #15803d; /* green-700 */
+            --secondary: #1e3a8a; /* blue-900 */
+            --bg-color: #f0fdf4; /* green-50 */
+            --card-bg: #ffffff;
+            --text-main: #374151; /* gray-700 */
+            --text-muted: #6b7280; /* gray-500 */
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .card h2 {
+            color: var(--secondary);
+            margin-top: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tool-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tool-item {
+            display: flex;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tool-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .tool-icon {
+            font-size: 2rem;
+            margin-right: 20px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .tool-content h3 {
+            color: var(--primary-dark);
+            margin: 0 0 5px 0;
+            font-size: 1.25rem;
+        }
+
+        .tool-content p {
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: #1d4ed8;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Relatório de Uso de Inteligência Artificial</h1>
+            <p>haCARthon - Projeto: <strong>CAR da Gente</strong></p>
+        </div>
+
+        <div class="card">
+            <h2>Como a equipe utilizou ferramentas de IA?</h2>
+            <p>
+                Durante o desenvolvimento do <strong>CAR da Gente</strong>, adotamos uma abordagem de trabalho "AI-First", utilizando diversas ferramentas de Inteligência Artificial para potencializar todas as etapas do processo, desde a ideação e estruturação do pitch até o desenvolvimento completo (código) e geração de mídias. Isso nos permitiu alcançar um nível altíssimo de produtividade, prototipação e qualidade na entrega final.
+            </p>
+            <p>Abaixo detalhamos todas as IAs utilizadas e suas respectivas funções no projeto:</p>
+        </div>
+
+        <div class="card">
+            <ul class="tool-list">
+                
+                <li class="tool-item">
+                    <div class="tool-icon">💻</div>
+                    <div class="tool-content">
+                        <span class="badge">Desenvolvimento / Programação</span>
+                        <h3>Claude Code + Antigravity</h3>
+                        <p><strong>Uso:</strong> Foram o motor principal para a construção do software. Utilizamos essas ferramentas como assistentes autônomos de código para o desenvolvimento do protótipo completo, escrevendo tanto a parte do <strong>Frontend</strong> (React, TailwindCSS) quanto a estruturação do <strong>Backend</strong>. Permitiram programar interfaces complexas, componentes, modais e responsividade de forma ágil e segura.</p>
+                    </div>
+                </li>
+
+                <li class="tool-item">
+                    <div class="tool-icon">⚙️</div>
+                    <div class="tool-content">
+                        <span class="badge">Orquestração / Integração</span>
+                        <h3>n8n + OpenAI</h3>
+                        <p><strong>Uso:</strong> O <strong>n8n</strong> foi utilizado para criar a lógica de integração, backend e construção dos workflows automatizados. Dentro desse workflow, plugamos os modelos da <strong>OpenAI</strong> para atuar como o cérebro da nossa inteligência artificial ("CARlinha"). É a OpenAI processando as regras do Código Florestal, analisando fotos de satélite ou documentos e devolvendo as respostas simplificadas (tradução cidadã) em texto e áudio.</p>
+                    </div>
+                </li>
+
+                <li class="tool-item">
+                    <div class="tool-icon">🎵</div>
+                    <div class="tool-content">
+                        <span class="badge">Áudio e Engajamento</span>
+                        <h3>Suno AI</h3>
+                        <p><strong>Uso:</strong> Responsável pela <strong>geração de músicas</strong>. Como o mote do nosso projeto é o "CAR Cantado" (comunicação através de paródias e cordéis para engajar o produtor rural), usamos o Suno para criar as melodias e transformar os textos explicativos em canções que facilitam o entendimento do produtor.</p>
+                    </div>
+                </li>
+
+                <li class="tool-item">
+                    <div class="tool-content">
+                        <div style="display:flex;">
+                            <div class="tool-icon" style="margin-left:0;">🧠</div>
+                            <div>
+                                <span class="badge">Pesquisa / Ideação / Revisão</span>
+                                <h3>ChatGPT e Gemini</h3>
+                                <p><strong>Uso:</strong> Serviram como nossos conselheiros durante todo o hackathon. Foram exaustivamente utilizados para <strong>conversas, debates, ideação, estruturação do pitch, pesquisa de viabilidade legal (Código Florestal)</strong> e para a revisão dos textos das interfaces para garantir que a comunicação estivesse aderente ao público rural e ao tom de voz do produto.</p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="tool-item">
+                    <div class="tool-icon">🎬</div>
+                    <div class="tool-content">
+                        <span class="badge">Audiovisual e Prototipação</span>
+                        <h3>CapCut (Recursos de IA)</h3>
+                        <p><strong>Uso:</strong> Utilizado na edição do vídeo de apresentação e demonstração do protótipo (Pitch). Aproveitamos os recursos de IA integrados do CapCut para refinamento de áudio, legendas automáticas dinâmicas e ajustes visuais, garantindo uma entrega audiovisual profissional para os avaliadores.</p>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+
+</body>
+</html>

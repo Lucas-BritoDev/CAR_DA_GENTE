@@ -27,6 +27,38 @@ export default function Produtor() {
 
   const handleToast = (msg: string) => setToastMsg(msg);
 
+  const baixarSeloPDF = async () => {
+    try {
+      handleToast("Gerando PDF, aguarde...");
+      const element = document.getElementById("pdf-selo-template");
+      if (!element) return;
+      
+      const { default: html2canvas } = await import("html2canvas");
+      const { jsPDF } = await import("jspdf");
+      
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
+      
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4"
+      });
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Selo_CARimbo_Verde_${imovelSelecionado.replace(/ /g, "_")}.pdf`);
+      
+      handleToast("Selo baixado com sucesso! 🎉");
+    } catch (err) {
+      console.error(err);
+      handleToast("Erro ao gerar o PDF do selo.");
+    }
+  };
+
+
   useEffect(() => {
     if (imovelSelecionado === "Fazenda CAR da Gente") {
       setDocumentos([
@@ -265,6 +297,43 @@ export default function Produtor() {
                       )}
                     </div>
 
+                    {/* CARtas na manga (Upsell) */}
+                    <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-md mt-6 mb-6 relative overflow-hidden">
+                      <div className="absolute -bottom-10 -right-10 text-9xl opacity-5">🃏</div>
+                      <div className="flex items-start gap-4 relative z-10">
+                        <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white shrink-0 animate-pulse shadow-md">
+                          <span className="material-symbols-outlined text-3xl">lightbulb</span>
+                        </div>
+                        <div className="text-left flex-1">
+                          <h4 className="text-lg font-black text-blue-900 mb-1">Ei, Raimundo! Identificamos oportunidades.</h4>
+                          <p className="text-sm text-blue-800 font-medium mb-3">Ver <span className="font-bold">CARtas na manga</span>:</p>
+                          <div className="bg-white p-5 rounded-lg border border-blue-100 shadow-sm">
+                            <p className="text-sm text-gray-700 mb-4">
+                              Você possui <strong className="text-green-700 text-base">4,2 ha (42.000 m²)</strong> de terras excedentes que pode vender para compensação.
+                            </p>
+                            <p className="text-sm font-bold text-gray-800 mb-3">
+                              Gostaria de pedir à CARlinha pra buscar vizinhos no MarCARtplace pra você compensar?
+                            </p>
+                            <div className="flex gap-3">
+                              <button
+                                onClick={() => { localStorage.setItem("novaCota", "true"); handleToast("Publicando no MarCARtplace com as informações e foto da simulação de Raimundo..."); setTimeout(() => navigate('/marketplace'), 2500); }}
+                                className="bg-green-600 text-white font-bold py-2.5 px-6 rounded hover:bg-green-700 transition shadow flex-1 sm:flex-none text-center"
+                              >
+                                SIM
+                              </button>
+                              <button className="bg-gray-200 text-gray-700 font-bold py-2.5 px-6 rounded hover:bg-gray-300 transition shadow flex-1 sm:flex-none text-center">
+                                NÃO
+                              </button>
+                            </div>
+                            <div className="mt-4 bg-gray-50 border-l-4 border-blue-400 p-2 text-[11px] text-gray-600 flex items-center gap-2">
+                              <span className="material-symbols-outlined text-blue-500 text-sm">auto_awesome</span>
+                              A CARlinha pode ajudar no preenchimento e ele já está lá na plataforma.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="mt-4">
                       <h4 className="font-bold text-gray-800 mb-2">
                         Fundamentos Legais
@@ -331,42 +400,7 @@ export default function Produtor() {
                       </button>
                     </div>
 
-                    {/* CARtas na manga (Upsell) */}
-                    <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-md mt-6 relative overflow-hidden">
-                      <div className="absolute -bottom-10 -right-10 text-9xl opacity-5">🃏</div>
-                      <div className="flex items-start gap-4 relative z-10">
-                        <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white shrink-0 animate-pulse shadow-md">
-                          <span className="material-symbols-outlined text-3xl">lightbulb</span>
-                        </div>
-                        <div className="text-left flex-1">
-                          <h4 className="text-lg font-black text-blue-900 mb-1">Ei, Raimundo! Identificamos oportunidades.</h4>
-                          <p className="text-sm text-blue-800 font-medium mb-3">Ver <span className="font-bold">CARtas na manga</span>:</p>
-                          <div className="bg-white p-5 rounded-lg border border-blue-100 shadow-sm">
-                            <p className="text-sm text-gray-700 mb-4">
-                              Você possui <strong className="text-green-700 text-base">4,2 ha (42.000 m²)</strong> de terras excedentes que pode vender para compensação.
-                            </p>
-                            <p className="text-sm font-bold text-gray-800 mb-3">
-                              Gostaria de pedir à CARlinha pra buscar vizinhos no MarCARtplace pra você compensar?
-                            </p>
-                            <div className="flex gap-3">
-                              <button
-                                onClick={() => { localStorage.setItem("novaCota", "true"); handleToast("Publicando no MarCARtplace com as informações e foto da simulação de Raimundo..."); setTimeout(() => navigate('/marketplace'), 2500); }}
-                                className="bg-green-600 text-white font-bold py-2.5 px-6 rounded hover:bg-green-700 transition shadow flex-1 sm:flex-none text-center"
-                              >
-                                SIM
-                              </button>
-                              <button className="bg-gray-200 text-gray-700 font-bold py-2.5 px-6 rounded hover:bg-gray-300 transition shadow flex-1 sm:flex-none text-center">
-                                NÃO
-                              </button>
-                            </div>
-                            <div className="mt-4 bg-gray-50 border-l-4 border-blue-400 p-2 text-[11px] text-gray-600 flex items-center gap-2">
-                              <span className="material-symbols-outlined text-blue-500 text-sm">auto_awesome</span>
-                              A CARlinha pode ajudar no preenchimento e ele já está lá na plataforma.
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
                 )}
 
@@ -483,6 +517,16 @@ export default function Produtor() {
                         <div className="mt-2 inline-block bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                           SELO ATIVO
                         </div>
+                        <div className="mt-4">
+                          <button
+                            onClick={baixarSeloPDF}
+                            className="bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow flex items-center justify-center gap-2 mx-auto"
+                          >
+                            <span className="material-symbols-outlined">download</span>
+                            BAIXAR SELO EM PDF
+                          </button>
+                        </div>
+
                       </div>
                     </div>
 
@@ -661,6 +705,49 @@ export default function Produtor() {
           }}
         />
       )}
+      {/* Template Oculto para o PDF */}
+      <div id="pdf-selo-template" style={{ position: "absolute", left: "-9999px", top: 0, width: "1123px", height: "794px", padding: "40px", backgroundColor: "#f0fdf4", color: "#111", fontFamily: "sans-serif", boxSizing: "border-box" }}>
+        <div style={{ border: "10px solid #16a34a", padding: "30px", borderRadius: "24px", textAlign: "center", position: "relative", height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column", justifyContent: "space-between", backgroundColor: "#ffffff" }}>
+          
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <img src="/logo.png" alt="CAR DA GENTE" style={{ height: "55px", objectFit: "contain" }} />
+            <div style={{ fontFamily: "'Rawline', 'Raleway', sans-serif", fontSize: "36px", fontWeight: "900", letterSpacing: "-1px" }}>
+              <span style={{ color: "#1351B4" }}>gov.</span><span style={{ color: "#168821" }}>b</span><span style={{ color: "#FFCC29" }}>r</span>
+            </div>
+          </div>
+          
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+            <div style={{ fontSize: "60px", marginBottom: "10px" }}>🏆</div>
+            
+            <h2 style={{ fontSize: "36px", color: "#166534", fontWeight: "900", marginBottom: "8px", textTransform: "uppercase" }}>Selo CARimbo Verde</h2>
+            <p style={{ fontSize: "18px", color: "#4b5563", marginBottom: "25px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "2px" }}>Certificado de Regularidade Ambiental</p>
+            
+            <p style={{ fontSize: "18px", lineHeight: "1.6", color: "#374151", maxWidth: "800px", margin: "0 auto 35px auto" }}>
+              Certificamos e atestamos publicamente que o imóvel rural<br/>
+              <strong style={{ fontSize: "22px", color: "#15803d" }}>{imovelSelecionado}</strong>,<br/>
+              registrado sob responsabilidade de <strong style={{ fontSize: "20px" }}>Seu Raimundo da Silva</strong>,<br/>
+              encontra-se em <strong>100% de conformidade</strong> com a legislação ambiental vigente (Código Florestal).
+            </p>
+            
+            <div style={{ display: "inline-block", backgroundColor: "#dcfce7", border: "4px solid #22c55e", padding: "10px 35px", borderRadius: "50px", color: "#15803d", fontWeight: "900", fontSize: "24px", letterSpacing: "2px", marginTop: "10px" }}>
+              STATUS: REGULAR ✅
+            </div>
+          </div>
+          
+          <div style={{ display: "flex", justifyContent: "space-between", borderTop: "2px dashed #cbd5e1", paddingTop: "15px", textAlign: "left" }}>
+            <div>
+              <p style={{ fontSize: "14px", color: "#64748b", margin: "0 0 5px 0" }}>Data de Emissão</p>
+              <p style={{ fontSize: "18px", fontWeight: "bold", color: "#334155", margin: 0 }}>{new Date().toLocaleDateString('pt-BR')}</p>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <p style={{ fontSize: "14px", color: "#64748b", margin: "0 0 5px 0" }}>Código de Autenticidade Único</p>
+              <p style={{ fontSize: "18px", fontWeight: "bold", color: "#334155", margin: 0, fontFamily: "monospace" }}>CAR-VERDE-{Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   );
 }
