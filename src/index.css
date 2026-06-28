@@ -1,0 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.cdnfonts.com/css/rawline");
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "rawline", "Raleway", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Raleway", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Garante que o VLibras fique acima de outros elementos e alinhado */
+div[vw] {
+  z-index: 9999 !important;
+  right: 1.5rem !important;
+}
+
+/* Transições para o menu flutuante lateral no mobile */
+div[vw],
+.accessibility-widget,
+.pwa-install-button,
+.carlinha-widget {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out !important;
+}
+
+@media (max-width: 768px) {
+  body.hide-widgets div[vw],
+  body.hide-widgets .accessibility-widget,
+  body.hide-widgets .pwa-install-button,
+  body.hide-widgets .carlinha-widget {
+    transform: translateX(150%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
+@layer base {
+  :root {
+    /* Casca institucional (gov.br) */
+    --gov-blue: #1351B4;
+    --gov-blue-dark: #0C326F;
+    --mma-green: #168821;
+    --mma-green-2: #1F9D57;
+
+    /* Semáforo Legal (núcleo do produto) */
+    --sem-verde: #168821;
+    --sem-amarelo: #C98E15;
+    --sem-vermelho: #B5281E;
+
+    /* Confiança / determinístico */
+    --trust-bg: #EAF2EE;
+    --trust-ink: #0E3D29;
+    --ai-bg: #EAF1FB;
+
+    /* Neutros */
+    --ink: #1B2B22;
+    --ink-soft: #5A6B62;
+    --paper: #FFFFFF;
+    --paper-2: #F6F7F5;
+    --rule: #E0E4E0;
+  }
+}

@@ -1,0 +1,192 @@
+/* OpenDyslexic Font (Local or CDN. Using CDN for drop-in) */
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("https://opendyslexic.org/core/Opendyslexic-Regular.otf")
+    format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --a11y-font-scale: 1;
+  --a11y-line-height: 1.5;
+  --a11y-letter-spacing: 0px;
+  --a11y-word-spacing: 0px;
+}
+
+/* Scaling base font size */
+html {
+  font-size: calc(16px * var(--a11y-font-scale)) !important;
+}
+
+/* Base text modifiers */
+.a11y-wrapper * {
+  line-height: var(--a11y-line-height) !important;
+  letter-spacing: var(--a11y-letter-spacing) !important;
+  word-spacing: var(--a11y-word-spacing) !important;
+}
+
+/* Dyslexia Font */
+.a11y-dyslexic-font .a11y-wrapper *:not(.material-symbols-outlined) {
+  font-family: "OpenDyslexic", sans-serif !important;
+}
+
+/* Readable Font */
+.a11y-readable-font .a11y-wrapper *:not(.material-symbols-outlined) {
+  font-family: "Arial", "Helvetica", sans-serif !important;
+}
+
+/* Text Align */
+.a11y-text-left .a11y-wrapper * {
+  text-align: left !important;
+}
+
+.a11y-text-justify .a11y-wrapper * {
+  text-align: justify !important;
+}
+
+/* Pause Animations */
+.a11y-pause-animations .a11y-wrapper *,
+.a11y-pause-animations .a11y-wrapper *::before,
+.a11y-pause-animations .a11y-wrapper *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Highlight Links */
+.a11y-highlight-links a,
+.a11y-highlight-links button {
+  text-decoration: underline !important;
+  text-decoration-color: #ffcc00 !important;
+  text-decoration-thickness: 3px !important;
+  outline: 2px solid #ffcc00 !important;
+  outline-offset: 2px !important;
+  background-color: rgba(255, 204, 0, 0.1) !important;
+}
+
+/* Highlight Titles */
+.a11y-highlight-titles h1,
+.a11y-highlight-titles h2,
+.a11y-highlight-titles h3,
+.a11y-highlight-titles h4,
+.a11y-highlight-titles h5,
+.a11y-highlight-titles h6 {
+  border: 2px solid #ffcc00 !important;
+  padding: 4px !important;
+}
+
+/* Saturation */
+.a11y-saturation-high .a11y-wrapper {
+  filter: saturate(2) !important;
+}
+
+.a11y-saturation-low .a11y-wrapper {
+  filter: saturate(0.5) !important;
+}
+
+.a11y-saturation-monochrome .a11y-wrapper {
+  filter: grayscale(1) !important;
+}
+
+/* Invert Colors */
+.a11y-invert-colors .a11y-wrapper {
+  filter: invert(1) hue-rotate(180deg) !important;
+}
+
+.a11y-invert-colors .a11y-wrapper img,
+.a11y-invert-colors .a11y-wrapper video,
+.a11y-invert-colors .a11y-wrapper [style*="background-image"] {
+  filter: invert(1) hue-rotate(180deg) !important;
+}
+
+/* High Contrast (Yellow on Black) */
+.a11y-contrast-high,
+.a11y-contrast-high body,
+.a11y-contrast-high .a11y-wrapper {
+  background-color: #000 !important;
+  color: #ffcc00 !important;
+}
+
+.a11y-contrast-high .a11y-wrapper * {
+  background-color: transparent !important;
+  color: #ffcc00 !important;
+  border-color: #ffcc00 !important;
+}
+
+.a11y-contrast-high .a11y-wrapper img,
+.a11y-contrast-high .a11y-wrapper video {
+  filter: grayscale(1) contrast(1.2) !important;
+}
+
+/* Dark Contrast */
+.a11y-contrast-dark,
+.a11y-contrast-dark body,
+.a11y-contrast-dark .a11y-wrapper {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+}
+
+.a11y-contrast-dark .a11y-wrapper * {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  border-color: #555555 !important;
+}
+
+/* Light Contrast */
+.a11y-contrast-light,
+.a11y-contrast-light body,
+.a11y-contrast-light .a11y-wrapper {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+.a11y-contrast-light .a11y-wrapper * {
+  background-color: transparent !important;
+  color: #000000 !important;
+  border-color: #cccccc !important;
+}
+
+/* Big Cursor */
+.a11y-cursor-white .a11y-wrapper * {
+  cursor:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="white" stroke="black" stroke-width="2"><path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L5.5 3.21z"/></svg>')
+      0 0,
+    auto !important;
+}
+
+.a11y-cursor-black .a11y-wrapper * {
+  cursor:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="black" stroke="white" stroke-width="2"><path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L5.5 3.21z"/></svg>')
+      0 0,
+    auto !important;
+}
+
+/* Motor Profile (Bigger Targets) */
+.a11y-profile-motor .a11y-wrapper button,
+.a11y-profile-motor .a11y-wrapper a,
+.a11y-profile-motor .a11y-wrapper input,
+.a11y-profile-motor .a11y-wrapper select {
+  min-height: 48px !important;
+  min-width: 48px !important;
+}
+
+/* Screen Reader Profile (Focus) */
+.a11y-profile-screen-reader .a11y-wrapper *:focus,
+.a11y-profile-motor .a11y-wrapper *:focus {
+  outline: 4px solid #ffcc00 !important;
+  outline-offset: 4px !important;
+}
+
+/* Utilities */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
