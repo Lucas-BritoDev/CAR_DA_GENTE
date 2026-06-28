@@ -32,25 +32,25 @@ export default function Produtor() {
       handleToast("Gerando PDF, aguarde...");
       const element = document.getElementById("pdf-selo-template");
       if (!element) return;
-      
+
       const { default: html2canvas } = await import("html2canvas");
       const { jsPDF } = await import("jspdf");
-      
+
       const canvas = await html2canvas(element, { scale: 2, useCORS: true });
       const imgData = canvas.toDataURL("image/png");
-      
+
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "mm",
         format: "a4"
       });
-      
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
+
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save(`Selo_CARimbo_Verde_${imovelSelecionado.replace(/ /g, "_")}.pdf`);
-      
+
       handleToast("Selo baixado com sucesso! 🎉");
     } catch (err) {
       console.error(err);
@@ -116,7 +116,7 @@ export default function Produtor() {
                 <p className="text-xs text-gray-500 mt-1">
                   Enviado em {doc.data}
                 </p>
-                                {doc.isCarDaGente && (
+                {doc.isCarDaGente && (
                   <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg relative overflow-hidden">
                     <div className="flex gap-3 items-center relative z-10">
                       <div className="w-10 h-10 rounded-full border-2 border-blue-200 shrink-0 shadow-md overflow-hidden bg-white">
@@ -139,7 +139,7 @@ export default function Produtor() {
                       <p className="text-lg text-center font-bold text-green-800">Selo Carimbo Verde</p>
                       <p className="text-xs text-center text-gray-500 uppercase tracking-wide">Fazenda Esperança</p>
                       <div className="mt-2 text-center">
-                        <button 
+                        <button
                           onClick={() => {
                             handleQueroEntender();
                             setActiveTab("selo");
@@ -213,7 +213,7 @@ export default function Produtor() {
                     >
                       Resumo Atual
                     </button>
-                    
+
                     <button
                       onClick={() => setActiveTab("calc")}
                       className={`flex-1 min-w-max px-4 py-3 text-xs font-bold uppercase ${activeTab === "calc" ? "bg-white text-blue-700 border-t-2 border-blue-700" : "text-gray-500 hover:bg-gray-100"}`}
@@ -362,7 +362,7 @@ export default function Produtor() {
                           onClick={handleGerarMinuta}
                           className="bg-[#2EAD4B] text-white px-4 py-3 rounded font-bold uppercase text-xs w-full hover:bg-green-600 transition shadow"
                         >
-                          Gerar Minuta do Termo de Compromisso (PRA)
+                          CRIAR RASCUNHO DO ACORDO
                         </button>
                       ) : (
                         <div className="flex flex-col gap-3">
@@ -396,7 +396,7 @@ export default function Produtor() {
                         <span className="material-symbols-outlined">
                           edit_document
                         </span>
-                        Retificar CAR no CAR DA GENTE
+                        AJUDA DA CARLINHA PARA CORRIGIR MEU CAR
                       </button>
                     </div>
 
@@ -404,7 +404,7 @@ export default function Produtor() {
                   </div>
                 )}
 
-                                {activeTab === "calc" && (
+                {activeTab === "calc" && (
                   <div className="space-y-4 animate-fade-in">
                     <div className="bg-yellow-50 border border-yellow-200 p-4 rounded">
                       <p className="text-xs text-yellow-800 font-bold uppercase">
@@ -419,13 +419,13 @@ export default function Produtor() {
                       <label className="block text-sm font-bold text-gray-700 mb-2">Qual o valor do crédito rural (Pronaf) que você precisa, sô?</label>
                       <div className="flex items-center gap-2 mb-4">
                         <span className="text-gray-500 font-bold">R$</span>
-                        <input 
-                          type="range" 
-                          min="10000" 
-                          max="300000" 
+                        <input
+                          type="range"
+                          min="10000"
+                          max="300000"
                           step="5000"
-                          value={valorCredito} 
-                          onChange={(e) => setValorCredito(Number(e.target.value))} 
+                          value={valorCredito}
+                          onChange={(e) => setValorCredito(Number(e.target.value))}
                           className="flex-1 accent-green-600"
                         />
                         <span className="text-blue-700 font-bold w-24 text-right">
@@ -453,7 +453,7 @@ export default function Produtor() {
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Juros Pago em 5 anos</span>
                             <span className="font-bold text-red-500">
-                              R$ {((valorCredito * 0.125 * 5)).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                              R$ {((valorCredito * 0.125 * 5)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                             </span>
                           </div>
                         </div>
@@ -477,7 +477,7 @@ export default function Produtor() {
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Juros Pago em 5 anos</span>
                             <span className="font-bold text-green-600">
-                              R$ {((valorCredito * 0.03 * 5)).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                              R$ {((valorCredito * 0.03 * 5)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                             </span>
                           </div>
                         </div>
@@ -487,7 +487,7 @@ export default function Produtor() {
                     <div className="bg-gradient-to-r from-green-600 to-green-800 text-white rounded-lg p-4 text-center shadow-lg">
                       <p className="text-xs uppercase font-bold opacity-80">Dinheiro que fica no seu bolso (Economia em 5 anos)</p>
                       <p className="text-3xl font-black mt-1 text-yellow-300">
-                        R$ {((valorCredito * 0.125 * 5) - (valorCredito * 0.03 * 5)).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                        R$ {((valorCredito * 0.125 * 5) - (valorCredito * 0.03 * 5)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </p>
                       <p className="text-xs mt-2 opacity-90">E aí, compadre? Vai rasgar dinheiro até quando? Regularizar não é custo — é lucro garantido!</p>
                     </div>
@@ -545,8 +545,8 @@ export default function Produtor() {
                   <div>
                     <h3 className="text-green-700 font-bold text-lg uppercase">
                       {imovelSelecionado === "Fazenda CAR da Gente" ? "FAZENDA CAR DA GENTE - (BARREIRAS/BA)" :
-                       imovelSelecionado === "Fazenda Esperança" ? "FAZENDA ESPERANÇA - (RIO VERDE/GO)" :
-                       "SÍTIO BOA ESPERANÇA - (FRONTEIRA/MG)"}
+                        imovelSelecionado === "Fazenda Esperança" ? "FAZENDA ESPERANÇA - (RIO VERDE/GO)" :
+                          "SÍTIO BOA ESPERANÇA - (FRONTEIRA/MG)"}
                     </h3>
                     <p className="text-xs text-gray-500 mt-1">MG-3126709-2FA0F208DAE241250A05195D6882FB7C</p>
                     <div className="flex flex-col gap-1 mt-2 text-sm">
@@ -588,7 +588,7 @@ export default function Produtor() {
                     <div>
                       <div className="flex items-center gap-2 mb-1"><span className="text-gray-500">Situação do Cadastro:</span> <span className="bg-[#4CAF50] text-white font-bold px-2 py-0.5 rounded text-[10px]">Ativo</span></div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500">Condição Extrema:</span> 
+                        <span className="text-gray-500">Condição Extrema:</span>
                         <span className="font-bold text-gray-700">
                           {imovelSelecionado === "Fazenda Esperança" ? "-" : "Em análise"}
                         </span>
@@ -602,10 +602,10 @@ export default function Produtor() {
                           <div className="flex justify-between"><span className="text-gray-500">Área do Imóvel Rural:</span> <span className="font-bold text-gray-700">50,0000 ha</span></div>
                           <div className="flex justify-between"><span className="text-gray-500">Módulos fiscais:</span> <span className="font-bold text-gray-700">2,09</span></div>
                           <div className="flex justify-between"><span className="text-gray-500">Município / UF:</span> <span className="font-bold text-gray-700">
-                          {imovelSelecionado === "Fazenda CAR da Gente" ? "Barreiras(BA)" :
-                           imovelSelecionado === "Fazenda Esperança" ? "Rio Verde(GO)" :
-                           "Fronteira(MG)"}
-                        </span></div>
+                            {imovelSelecionado === "Fazenda CAR da Gente" ? "Barreiras(BA)" :
+                              imovelSelecionado === "Fazenda Esperança" ? "Rio Verde(GO)" :
+                                "Fronteira(MG)"}
+                          </span></div>
                           <div className="flex justify-between"><span className="text-gray-500">Coordenadas Geográficas do Centroide:</span> <span className="font-bold text-gray-700 text-right">Lat: 20°16'37.41" S<br />Long: 49°11'27.13" O</span></div>
                         </div>
                         <div className="space-y-1">
@@ -708,32 +708,32 @@ export default function Produtor() {
       {/* Template Oculto para o PDF */}
       <div id="pdf-selo-template" style={{ position: "absolute", left: "-9999px", top: 0, width: "1123px", height: "794px", padding: "40px", backgroundColor: "#f0fdf4", color: "#111", fontFamily: "sans-serif", boxSizing: "border-box" }}>
         <div style={{ border: "10px solid #16a34a", padding: "30px", borderRadius: "24px", textAlign: "center", position: "relative", height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column", justifyContent: "space-between", backgroundColor: "#ffffff" }}>
-          
+
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <img src="/logo.png" alt="CAR DA GENTE" style={{ height: "55px", objectFit: "contain" }} />
             <div style={{ fontFamily: "'Rawline', 'Raleway', sans-serif", fontSize: "36px", fontWeight: "900", letterSpacing: "-1px" }}>
               <span style={{ color: "#1351B4" }}>gov.</span><span style={{ color: "#168821" }}>b</span><span style={{ color: "#FFCC29" }}>r</span>
             </div>
           </div>
-          
+
           <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <div style={{ fontSize: "60px", marginBottom: "10px" }}>🏆</div>
-            
+
             <h2 style={{ fontSize: "36px", color: "#166534", fontWeight: "900", marginBottom: "8px", textTransform: "uppercase" }}>Selo CARimbo Verde</h2>
             <p style={{ fontSize: "18px", color: "#4b5563", marginBottom: "25px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "2px" }}>Certificado de Regularidade Ambiental</p>
-            
+
             <p style={{ fontSize: "18px", lineHeight: "1.6", color: "#374151", maxWidth: "800px", margin: "0 auto 35px auto" }}>
-              Certificamos e atestamos publicamente que o imóvel rural<br/>
-              <strong style={{ fontSize: "22px", color: "#15803d" }}>{imovelSelecionado}</strong>,<br/>
-              registrado sob responsabilidade de <strong style={{ fontSize: "20px" }}>Seu Raimundo da Silva</strong>,<br/>
+              Certificamos e atestamos publicamente que o imóvel rural<br />
+              <strong style={{ fontSize: "22px", color: "#15803d" }}>{imovelSelecionado}</strong>,<br />
+              registrado sob responsabilidade de <strong style={{ fontSize: "20px" }}>Seu Raimundo da Silva</strong>,<br />
               encontra-se em <strong>100% de conformidade</strong> com a legislação ambiental vigente (Código Florestal).
             </p>
-            
+
             <div style={{ display: "inline-block", backgroundColor: "#dcfce7", border: "4px solid #22c55e", padding: "10px 35px", borderRadius: "50px", color: "#15803d", fontWeight: "900", fontSize: "24px", letterSpacing: "2px", marginTop: "10px" }}>
               STATUS: REGULAR ✅
             </div>
           </div>
-          
+
           <div style={{ display: "flex", justifyContent: "space-between", borderTop: "2px dashed #cbd5e1", paddingTop: "15px", textAlign: "left" }}>
             <div>
               <p style={{ fontSize: "14px", color: "#64748b", margin: "0 0 5px 0" }}>Data de Emissão</p>
