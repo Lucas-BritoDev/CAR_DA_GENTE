@@ -74,6 +74,29 @@ O projeto foi construído para ser acessível, modular e de baixo custo operacio
 ### Importando os fluxos do n8n
 Na pasta `n8n/`, você encontrará os arquivos `.json` exportados dos workflows de IA e WhatsApp (ex: `workflow-seu-mundinho.json`). Basta importá-los diretamente em sua instância do n8n para rodar as integrações de backend.
 
+## 💬 CARlinha no WhatsApp (n8n + Evolution API)
+
+O fluxo **`n8n/workflow-seu-mundinho.json`** coloca a **CARlinha** para atender no WhatsApp via **Evolution API**. Ela entende **texto, áudio e imagem** e responde no mesmo tom regional do app, ajudando a preencher o CAR e explicando o Código Florestal.
+
+**Fluxo:**
+```
+Webhook (mundinho_zap) → Dados → Filtro anti-loop → Switch (texto/áudio/imagem)
+   ├─ áudio  → base64 → Whisper (transcreve)
+   ├─ imagem → base64 → GPT-4o Visão (lê fotos e prints da tela do CAR)
+   └─ texto  → direto
+→ CARlinha (IA + memória) → Enviar texto (Evolution API)
+```
+
+**Configuração rápida:**
+1. Importe `n8n/workflow-seu-mundinho.json` no n8n (requer o community node `n8n-nodes-evolution-api`).
+2. Associe as credenciais **no n8n** (nunca no arquivo): **OpenAI** (GPT/Whisper/Visão) e **Evolution API** (nó *Enviar texto*).
+3. Aponte o webhook da Evolution para a URL do nó `mundinho_zap` e habilite o evento **`messages.upsert`**.
+4. Ative o workflow e teste mandando texto, áudio ou um print da tela do CAR.
+
+> 🔒 **Sem segredos no repositório.** O arquivo `.json` não contém apikey/token: `apikey`, `server_url` e `instancia` da Evolution são lidos em tempo de execução do payload do webhook, e as credenciais ficam apenas no seu n8n.
+
+📚 Guia completo (configuração, segurança e solução de problemas): **[`n8n/README-evolution-api.md`](n8n/README-evolution-api.md)**.
+
 ## 🛡️ Segurança: Filtro Anti-Alucinação
 Este projeto trata de regularização ambiental governamental. Portanto, nossa **IA não toma decisões**. Ela apenas lê e traduz resultados gerados por nosso motor determinístico, garantindo **segurança jurídica e auditoria total** sem inventar regras (alucinações).
 

@@ -1,0 +1,283 @@
+{
+  "name": "seu_mundinho — CARlinha no WhatsApp",
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "mundinho_zap", "options": {} },
+      "id": "fffaaf4b-5b5c-4c98-8a08-58ed5caaa9d2",
+      "name": "Recebe Mensagem (mundinho_zap)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-368, 304]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "b0f12bb7", "name": "instancia", "value": "={{ $json.body.instance }}", "type": "string" },
+            { "id": "0fd89846", "name": "remotejid", "value": "={{ $json.body.data.key.remoteJid }}", "type": "string" },
+            { "id": "15ac4344", "name": "fromme", "value": "={{ $json.body.data.key.fromMe }}", "type": "string" },
+            { "id": "dac24acd", "name": "pushname", "value": "={{ $json.body.data.pushName }}", "type": "string" },
+            { "id": "3df2887f", "name": "conversation", "value": "={{ $json.body.data.message.conversation }}", "type": "string" },
+            { "id": "9d0a20e6", "name": "messagetype", "value": "={{ $json.body.data.messageType }}", "type": "string" },
+            { "id": "f6059855", "name": "datetime", "value": "={{ $json.body.date_time }}", "type": "string" },
+            { "id": "d2298573", "name": "server_url", "value": "={{ $json.body.server_url }}", "type": "string" },
+            { "id": "8484ebd9", "name": "apikey", "value": "={{ $json.body.apikey }}", "type": "string" },
+            { "id": "capture-event-type", "name": "event", "value": "={{ $json.body.event }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "33605812-d481-4b0f-983d-5402bdf409e5",
+      "name": "Dados",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-128, 304]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "loose", "version": 1 },
+          "combinator": "and",
+          "conditions": [
+            { "id": "ev", "leftValue": "={{ $json.event }}", "operator": { "type": "string", "operation": "equals" }, "rightValue": "messages.upsert" },
+            { "id": "nf", "leftValue": "={{ $json.fromme }}", "operator": { "type": "string", "operation": "notEquals" }, "rightValue": "true" },
+            { "id": "nj", "leftValue": "={{ $json.remotejid }}", "operator": { "type": "string", "operation": "contains" }, "rightValue": "@s.whatsapp.net" }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "3f0765f8-3670-4618-bda2-76ff95f34e68",
+      "name": "Ignora Própria CARlinha",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [96, 304]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 }, "conditions": [{ "id": "r1", "leftValue": "={{ $json.messagetype }}", "operator": { "type": "string", "operation": "contains" }, "rightValue": "audio" }], "combinator": "and" }, "renameOutput": true, "outputKey": "audio" },
+            { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 }, "conditions": [{ "id": "r2", "leftValue": "={{ $json.messagetype }}", "operator": { "type": "string", "operation": "contains" }, "rightValue": "image" }], "combinator": "and" }, "renameOutput": true, "outputKey": "imagem" }
+          ]
+        },
+        "options": { "fallbackOutput": "extra", "renameFallbackOutput": "texto" }
+      },
+      "id": "12a1a19e-7f6a-4ec9-974c-1a38aff85845",
+      "name": "Tipo de Mensagem",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [320, 288]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Dados').item.json.server_url }}/chat/getBase64FromMediaMessage/{{ $('Dados').item.json.instancia }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "apikey", "value": "={{ $('Dados').item.json.apikey }}" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"message\": $('Recebe Mensagem (mundinho_zap)').item.json.body.data, \"convertToMp4\": false } }}",
+        "options": {}
+      },
+      "id": "33c5aff0-5a02-43e4-bcf7-14db0c170537",
+      "name": "Baixa Áudio (base64)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [688, 112]
+    },
+    {
+      "parameters": { "operation": "toBinary", "sourceProperty": "base64", "options": { "fileName": "audio.ogg", "mimeType": "audio/ogg" } },
+      "id": "1c3b3821-452e-4f39-ad41-390311e479cf",
+      "name": "Converte Áudio p/ Arquivo",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [880, 112]
+    },
+    {
+      "parameters": { "resource": "audio", "operation": "transcribe", "options": { "language": "pt" } },
+      "id": "a0c44cd5-4e68-4c1b-87f1-bf26502bb3ec",
+      "name": "Transcreve Áudio (Whisper)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [1088, 112]
+    },
+    {
+      "parameters": {
+        "assignments": { "assignments": [{ "id": "pa", "name": "pergunta", "value": "={{ $json.text || $json[0]?.text || $json[0]?.content?.[0]?.text || $json.transcription || $json.output || 'mensagem de áudio do produtor (não foi possível transcrever)' }}", "type": "string" }] },
+        "options": {}
+      },
+      "id": "6086a8ea-efcc-46d4-8df2-2d71e5d6b2ff",
+      "name": "Pergunta do Áudio",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1280, 112]
+    },
+    {
+      "parameters": { "numberInputs": 3 },
+      "id": "c755e8d3-80ca-4de4-82fb-334dd33aad0d",
+      "name": "Junta as Entradas",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1504, 304]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Dados').item.json.server_url }}/chat/getBase64FromMediaMessage/{{ $('Dados').item.json.instancia }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "apikey", "value": "={{ $('Dados').item.json.apikey }}" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"message\": $('Recebe Mensagem (mundinho_zap)').item.json.body.data, \"convertToMp4\": false } }}",
+        "options": {}
+      },
+      "id": "02161861-0d6b-476e-be9a-c996177f1ba0",
+      "name": "Baixa Imagem (base64)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [688, 304]
+    },
+    {
+      "parameters": { "operation": "toBinary", "sourceProperty": "base64", "options": { "fileName": "foto.jpg", "mimeType": "={{ $json.mimetype || 'image/jpeg' }}" } },
+      "id": "0b5a7765-1a38-4c46-b94d-af18eff48eea",
+      "name": "Converte Imagem p/ Arquivo",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [880, 304]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": { "__rl": true, "mode": "list", "value": "gpt-4o", "cachedResultName": "gpt-4o" },
+        "inputType": "base64",
+        "binaryPropertyName": "data",
+        "text": "Esta imagem foi enviada por um produtor rural no app 'CAR da Gente'. Pode ser: (a) uma FOTO da propriedade (mata, rio, nascente, plantio, construções) ou (b) um PRINT da tela do sistema do CAR. Descreva objetivamente o que vê. Se for uma tela do sistema, TRANSCREVA os títulos, rótulos de campos, valores preenchidos e a etapa atual (ex.: Área total, Reserva Legal, APP, Módulos Fiscais, botões), para que a assistente ajude a preencher. Seja completo mas direto.",
+        "simplify": true,
+        "options": { "detail": "high", "maxTokens": 600 }
+      },
+      "id": "7cb7565e-069a-497d-ba20-dcb0f4d9e941",
+      "name": "Analisa Imagem (Visão)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [1088, 304]
+    },
+    {
+      "parameters": {
+        "assignments": { "assignments": [{ "id": "pi", "name": "pergunta", "value": "=O produtor enviou um print/foto pelo app CAR da Gente. Conteúdo identificado na imagem: {{ $json[0]?.content?.[0]?.text || $json.content || $json.text || 'imagem recebida (não foi possível ler)' }}. Com base nisso, ajude-o a entender e preencher os campos do CAR, explicando cada um.", "type": "string" }] },
+        "options": {}
+      },
+      "id": "0ce02479-9556-49df-ba92-33641b9beedc",
+      "name": "Pergunta da Imagem",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1280, 304]
+    },
+    {
+      "parameters": {
+        "assignments": { "assignments": [{ "id": "pt", "name": "pergunta", "value": "={{ $json.conversation }}", "type": "string" }] },
+        "options": {}
+      },
+      "id": "815655d0-e6c6-4f10-9d9b-1cf3cc9d1b45",
+      "name": "Pergunta do Texto",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [928, 576]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensagem recebida no WhatsApp de {{ $('Dados').first().json.pushname }} (formato: {{ $('Dados').first().json.messagetype }}): \"{{ $json.pergunta }}\"",
+        "options": {
+          "enableStreaming": false,
+          "systemMessage": "Você é a CARlinha, a assistente virtual do app 'CAR da Gente' (SICAR DIGITAL 2.0). Você é a 'doutora das leis com a linguagem do povo': ajuda os pequenos produtores rurais a preencher o Cadastro Ambiental Rural (CAR) e a entender a lei, sempre com simpatia e jeitinho do interior.\n\nJEITO DE FALAR (MUITO IMPORTANTE — fale IGUAL no sistema):\n- Português do Brasil bem simples, caloroso e regional (nordestino/baiano). Use 'tu' e 'você' à vontade e expressões do dia a dia: 'ó', 'viu?', 'rapaz', 'bora', 'facin', 'uhul!', 'fica tranquilo(a)'.\n- Trate com carinho e use diminutivos quando couber (ex.: 'Calma, Raimundinho!').\n- Frases curtas (a resposta também vira áudio de voz). No máximo 1 ou 2 emojis.\n- Use os trocadilhos do app com 'CAR': 'CARtas na manga' (compensar pendência), 'Selo Carimbo Verde', 'Laudo Cidadão', a 'Escadinha' do Código Florestal.\n- Exemplos do seu tom (siga esse estilo):\n  'Eu sou a doutora das leis com a linguagem do povo e te prometo que tu vai entender facin! 🌱'\n  'Calma, Raimundinho! Isso aí a gente resolve juntinho.'\n  'Ó, tu ficou com uma pendência, mas tem CARta na manga: dá pra compensar com uma propriedade vizinha (Art. 66).'\n\nSEU PAPEL (seja proativa, NUNCA genérica):\n- Guie o cadastro PASSO A PASSO e diga exatamente o que preencher em cada campo e por quê. Faça UMA pergunta de cada vez.\n- Quando o produtor mandar a descrição de um print da tela, leia os campos e ajude a preencher cada um.\n- Explique a lei (Lei 12.651/2012) com exemplo do dia a dia. Nunca responda só 'tô aqui pra ajudar' — sempre dê orientação + próximo passo.\n\nETAPAS DO CAR (oriente nesta ordem): 1) Dados do imóvel (nome, município/UF, área em ha, posse ou matrícula); 2) Dados do produtor (nome, CPF, contato); 3) Mapa/Geo (perímetro, sede, áreas de produção); 4) APP (rios, nascentes, lagos); 5) Reserva Legal (% por bioma); 6) Áreas consolidadas e vegetação nativa; 7) Revisar e enviar (se tiver pendência, aderir ao PRA e/ou usar as CARtas na manga via CRA).\n\nBASE LEGAL (Lei 12.651/2012 — explique simples e cite o artigo): Reserva Legal por região — Amazônia Legal 80% floresta, 35% cerrado, 20% campos; resto do país 20% (Art. 12). APP de rio: a faixa depende da largura (rio de até 10 m → 30 m de faixa) (Art. 4º). Nascente: raio de 50 m (Art. 4º). Áreas consolidadas (uso antes de 22/07/2008): a 'Escadinha' reduz a recomposição conforme os módulos fiscais (Art. 61-A). CRA: compensa o déficit de RL (Art. 66). PRA + Termo de Compromisso: regulariza pendências (Art. 59). Se não tiver certeza de um número, mande confirmar no Laudo Cidadão/analista — NUNCA invente número.\n\nEXEMPLO JÁ CALCULADO (Sítio Boa Esperança, Seu Raimundo — use se for esse caso ou pedirem exemplo): 50 ha, Cerrado fora da Amazônia, 3,13 módulos fiscais; RL exige 20% = 10 ha, tem 5,8 ha → déficit de 4,2 ha (situação vermelha); APP do rio 30 m, por ser consolidada recompõe 15 m; solução: aderir ao PRA + compensar a RL com CRA (as CARtas na manga). Sempre tranquilize: tem solução!\n\nQuando fizer sentido, encerre com o selo: 'Protótipo · haCARthon 2026'."
+        }
+      },
+      "id": "95c71ee7-7afb-43ef-81ac-6c2b94980bcc",
+      "name": "CARlinha (IA)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [1728, 304]
+    },
+    {
+      "parameters": {
+        "model": { "__rl": true, "value": "gpt-4o-mini", "mode": "list", "cachedResultName": "gpt-4o-mini" },
+        "options": { "temperature": 0.4 }
+      },
+      "id": "b0df3394-5727-4224-80be-075b4e71c936",
+      "name": "GPT (OpenAI)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [1632, 528]
+    },
+    {
+      "parameters": { "sessionIdType": "customKey", "sessionKey": "={{ $('Dados').item.json.remotejid }}", "contextWindowLength": 10 },
+      "id": "c135dad8-4ee5-4b05-ab43-867a2afb1cd5",
+      "name": "Memória da Conversa",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [1792, 528]
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('Dados').first().json.instancia }}",
+        "remoteJid": "={{ $('Dados').first().json.remotejid }}",
+        "messageText": "={{ $json.output }}",
+        "options_message": {}
+      },
+      "id": "dd483a5b-619c-41ea-8e4b-73a3e040629f",
+      "name": "Enviar texto",
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [2032, 304]
+    },
+    {
+      "parameters": {
+        "content": "## CARlinha no WhatsApp (simulação)\nWebhook no path `mundinho_zap`. Filtra mensagens da própria CARlinha (anti-loop) e separa por tipo: **texto**, **áudio** (transcrito com Whisper) e **imagem** (analisada com visão). A IA responde como a CARlinha do sistema (linguagem do povo).",
+        "height": 200,
+        "width": 900,
+        "color": 4
+      },
+      "id": "8324f4ae-30c2-4d7f-8439-ad610a4ba567",
+      "name": "Sticky Note acef788e",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-480, -64]
+    },
+    {
+      "parameters": {
+        "content": "## Entrada multimodal\nÁudio e imagem são baixados em base64 pela Evolution (`getBase64FromMediaMessage`), convertidos em arquivo e enviados à OpenAI (Whisper / Visão). O resultado vira a \"pergunta\" da CARlinha.",
+        "height": 400,
+        "width": 700,
+        "color": 5
+      },
+      "id": "407eeb53-52b6-4130-b451-287a7c933f79",
+      "name": "Sticky Note c528adad",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [688, -368]
+    }
+  ],
+  "connections": {
+    "Recebe Mensagem (mundinho_zap)": { "main": [[{ "node": "Dados", "type": "main", "index": 0 }]] },
+    "Dados": { "main": [[{ "node": "Ignora Própria CARlinha", "type": "main", "index": 0 }]] },
+    "Ignora Própria CARlinha": { "main": [[{ "node": "Tipo de Mensagem", "type": "main", "index": 0 }]] },
+    "Tipo de Mensagem": { "main": [[{ "node": "Baixa Áudio (base64)", "type": "main", "index": 0 }], [{ "node": "Baixa Imagem (base64)", "type": "main", "index": 0 }], [{ "node": "Pergunta do Texto", "type": "main", "index": 0 }]] },
+    "Baixa Áudio (base64)": { "main": [[{ "node": "Converte Áudio p/ Arquivo", "type": "main", "index": 0 }]] },
+    "Converte Áudio p/ Arquivo": { "main": [[{ "node": "Transcreve Áudio (Whisper)", "type": "main", "index": 0 }]] },
+    "Transcreve Áudio (Whisper)": { "main": [[{ "node": "Pergunta do Áudio", "type": "main", "index": 0 }]] },
+    "Pergunta do Áudio": { "main": [[{ "node": "Junta as Entradas", "type": "main", "index": 0 }]] },
+    "Baixa Imagem (base64)": { "main": [[{ "node": "Converte Imagem p/ Arquivo", "type": "main", "index": 0 }]] },
+    "Converte Imagem p/ Arquivo": { "main": [[{ "node": "Analisa Imagem (Visão)", "type": "main", "index": 0 }]] },
+    "Analisa Imagem (Visão)": { "main": [[{ "node": "Pergunta da Imagem", "type": "main", "index": 0 }]] },
+    "Pergunta da Imagem": { "main": [[{ "node": "Junta as Entradas", "type": "main", "index": 1 }]] },
+    "Pergunta do Texto": { "main": [[{ "node": "Junta as Entradas", "type": "main", "index": 2 }]] },
+    "Junta as Entradas": { "main": [[{ "node": "CARlinha (IA)", "type": "main", "index": 0 }]] },
+    "CARlinha (IA)": { "main": [[{ "node": "Enviar texto", "type": "main", "index": 0 }]] },
+    "GPT (OpenAI)": { "ai_languageModel": [[{ "node": "CARlinha (IA)", "type": "ai_languageModel", "index": 0 }]] },
+    "Memória da Conversa": { "ai_memory": [[{ "node": "CARlinha (IA)", "type": "ai_memory", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}
